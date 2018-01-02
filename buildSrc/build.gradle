@@ -18,9 +18,9 @@ repositories {
 }
 
 dependencies {
-    implementation gradleApi()
-    implementation localGroovy()
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.squareup:javapoet:1.9.0'
+    implementation 'org.javassist:javassist:3.22.0-GA'
     implementation 'com.android.tools.build:gradle:3.0.1'
 }
 

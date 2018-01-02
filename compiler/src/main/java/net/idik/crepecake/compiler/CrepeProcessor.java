@@ -2,11 +2,11 @@ package net.idik.crepecake.compiler;
 
 import com.google.auto.service.AutoService;
 
-import net.idik.crepecake.compiler.data.AnnotationData;
-import net.idik.crepecake.compiler.data.InstanceOfData;
-import net.idik.crepecake.compiler.generator.CodeGenerator;
-import net.idik.crepecake.compiler.parser.InstanceOfParser;
 import net.idik.crepecake.annotations.InstanceOf;
+import net.idik.crepecake.compiler.data.AnnotationSpec;
+import net.idik.crepecake.compiler.data.InstanceOfSpec;
+import net.idik.crepecake.compiler.generator.InstanceOfInstructionCodeGenerator;
+import net.idik.crepecake.compiler.parser.InstanceOfParser;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -16,6 +16,7 @@ import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
+import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
@@ -23,13 +24,15 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
-@AutoService(Process.class)
+@AutoService(Processor.class)
 public class CrepeProcessor extends AbstractProcessor {
 
     private Types typeUtils;
     private Messager messager;
     private Filer filer;
     private Elements elementUtils;
+
+    private InstanceOfParser instanceOfParser;
 
 
     @Override
@@ -49,12 +52,13 @@ public class CrepeProcessor extends AbstractProcessor {
         messager = processingEnvironment.getMessager();
         filer = processingEnvironment.getFiler();
         elementUtils = processingEnvironment.getElementUtils();
+        instanceOfParser = new InstanceOfParser(typeUtils, elementUtils, messager);
     }
 
     @Override
     public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
 
-        Set<AnnotationData> datas = new HashSet<>();
+        Set<AnnotationSpec> datas = new HashSet<>();
 
         for (Element element : roundEnvironment.getElementsAnnotatedWith(InstanceOf.class)) {
 
@@ -62,7 +66,7 @@ public class CrepeProcessor extends AbstractProcessor {
                 continue;
             }
 
-            InstanceOfData data = InstanceOfParser.parse(element, typeUtils, elementUtils, messager);
+            InstanceOfSpec data = instanceOfParser.parse((TypeElement) element);
 
             if (data != null) {
                 datas.add(data);
@@ -70,7 +74,7 @@ public class CrepeProcessor extends AbstractProcessor {
 
         }
 
-        CodeGenerator.generate(datas, messager, filer);
+        new InstanceOfInstructionCodeGenerator(messager, filer).generate(datas);
 
         return true;
     }

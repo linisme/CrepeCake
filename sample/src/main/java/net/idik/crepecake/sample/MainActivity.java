@@ -9,8 +9,6 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import net.idik.crepecake.R;
-
 public class MainActivity extends AppCompatActivity {
 
     @Override

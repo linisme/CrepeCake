@@ -1,4 +1,9 @@
 package net.idik.crepecake.api;
 
-public class InvocationHandler {
+public interface InvocationHandler {
+
+    Object getCaller();
+
+    Object call(Object... args);
+
 }

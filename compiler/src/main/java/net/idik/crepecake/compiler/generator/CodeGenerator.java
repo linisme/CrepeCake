@@ -1,7 +1,6 @@
 package net.idik.crepecake.compiler.generator;
 
-import net.idik.crepecake.compiler.data.AnnotationData;
-import net.idik.crepecake.compiler.data.InstanceOfData;
+import net.idik.crepecake.compiler.data.AnnotationSpec;
 
 import java.util.Set;
 
@@ -9,21 +8,25 @@ import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
 
 /**
- * Created by linshuaibin on 2017/12/28.
+ * Created by linshuaibin on 2017/12/29.
  */
 
-public class CodeGenerator {
+public abstract class CodeGenerator<T> {
+    private Messager messager;
+    private Filer filer;
 
-    public static void generate(Set<AnnotationData> datas, Messager messager, Filer filer) {
-
-        for (AnnotationData data : datas) {
-            if (data instanceof InstanceOfData) {
-                generate((InstanceOfData) data, messager, filer);
-            }
-        }
-
+    CodeGenerator(Filer filer, Messager messager) {
+        this.filer = filer;
+        this.messager = messager;
     }
 
-    private static void generate(InstanceOfData data, Messager messager, Filer filer) {
+    public abstract void generate(T spec);
+
+    public Filer getFiler() {
+        return filer;
+    }
+
+    public Messager getMessager() {
+        return messager;
     }
 }

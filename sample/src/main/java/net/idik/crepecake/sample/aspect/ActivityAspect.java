@@ -11,7 +11,7 @@ import net.idik.crepecake.api.InvocationHandler;
  */
 
 
-@InstanceOf(Activity.class)
+@InstanceOf(value = Activity.class, hello = 3)
 public class ActivityAspect {
 
     void onCreate(InvocationHandler invocation, Bundle savedInstanceState) {

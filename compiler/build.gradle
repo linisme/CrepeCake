@@ -5,7 +5,8 @@ dependencies {
     implementation 'com.squareup:javapoet:1.9.0'
     implementation 'com.google.auto.service:auto-service:1.0-rc3'
     implementation project(':annotations')
+    implementation project(':api')
 }
 
-sourceCompatibility = "1.7"
-targetCompatibility = "1.7"
+sourceCompatibility = "1.8"
+targetCompatibility = "1.8"

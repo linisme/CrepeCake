@@ -13,4 +13,9 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface InstanceOf {
     Class value();
+
+    String name() default "";
+
+    int hello();
+
 }
