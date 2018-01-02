@@ -41,12 +41,12 @@ class InjectInstanceOfTransform extends Transform {
                 ClassPool.getDefault().appendClassPath(directoryInput.file.absolutePath)
             }
         }
+        def injector = new InstanceOfInjector()
         transformInvocation.inputs.each { input ->
             input.jarInputs.each { jarInput ->
                 def dest = transformInvocation.outputProvider.getContentLocation(jarInput.name, jarInput.contentTypes, jarInput.scopes, Format.JAR)
                 FileUtils.copyFile(jarInput.file, dest)
             }
-            def injector = new InstanceOfInjector()
             input.directoryInputs.each { directoryInput ->
                 injector.inject(directoryInput.file.absolutePath)
                 def dest = transformInvocation.outputProvider.getContentLocation(directoryInput.name, directoryInput.contentTypes, directoryInput.scopes, Format.DIRECTORY)

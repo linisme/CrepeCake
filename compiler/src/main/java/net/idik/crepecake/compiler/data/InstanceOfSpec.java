@@ -8,17 +8,24 @@ import java.util.List;
 
 public class InstanceOfSpec extends AnnotationSpec {
 
-    private String className;
+    private String targetClassName;
+
+    private String processorClassName;
 
     private List<MethodSpec> invocationMethods;
 
-    public InstanceOfSpec(String className, List<MethodSpec> invocationMethods) {
-        this.className = className;
+    public InstanceOfSpec(String targetClassName, String processorClassName, List<MethodSpec> invocationMethods) {
+        this.targetClassName = targetClassName;
         this.invocationMethods = invocationMethods;
+        this.processorClassName = processorClassName;
     }
 
-    public String getClassName() {
-        return className;
+    public String getTargetClassName() {
+        return targetClassName;
+    }
+
+    public String getProcessorClassName() {
+        return processorClassName;
     }
 
     public List<MethodSpec> getInvocationMethods() {

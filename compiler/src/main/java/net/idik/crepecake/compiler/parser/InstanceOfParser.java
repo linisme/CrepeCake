@@ -8,7 +8,6 @@ import net.idik.crepecake.compiler.data.MethodSpec;
 import net.idik.crepecake.compiler.data.VariantSpec;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.processing.Messager;
@@ -37,8 +36,6 @@ public class InstanceOfParser {
     }
 
     public InstanceOfSpec parse(TypeElement element) {
-//        @net.idik.crepecake.annotations.InstanceOf(value=android.app.Activity)
-//        @net.idik.crepecake.annotations.InstanceOf(name=, value=android.app.Activity, hello=3)
         InstanceOf instanceOf = element.getAnnotation(InstanceOf.class);
         String className = Utils.getRawString(instanceOf, "value");
         List<MethodSpec> invocationMethods = new ArrayList<>();
@@ -47,7 +44,7 @@ public class InstanceOfParser {
                 invocationMethods.add(parseMethod((ExecutableElement) it));
             }
         });
-        return new InstanceOfSpec(className, invocationMethods);
+        return new InstanceOfSpec(className, element.getQualifiedName().toString(), invocationMethods);
     }
 
     private MethodSpec parseMethod(ExecutableElement element) {

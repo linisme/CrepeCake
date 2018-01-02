@@ -1,9 +1,5 @@
 package net.idik.crepecake.compiler.generator;
 
-import net.idik.crepecake.compiler.data.AnnotationSpec;
-
-import java.util.Set;
-
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
 

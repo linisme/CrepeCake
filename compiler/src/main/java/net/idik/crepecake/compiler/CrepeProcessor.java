@@ -10,6 +10,8 @@ import net.idik.crepecake.compiler.parser.InstanceOfParser;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import javax.annotation.processing.AbstractProcessor;
@@ -58,7 +60,7 @@ public class CrepeProcessor extends AbstractProcessor {
     @Override
     public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
 
-        Set<AnnotationSpec> datas = new HashSet<>();
+        Set<InstanceOfSpec> datas = new HashSet<>();
 
         for (Element element : roundEnvironment.getElementsAnnotatedWith(InstanceOf.class)) {
 

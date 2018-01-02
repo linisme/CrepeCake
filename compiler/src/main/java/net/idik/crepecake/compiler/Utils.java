@@ -12,7 +12,7 @@ public class Utils {
         String source = annotation.toString();
         int start = source.indexOf('(');
         int end = source.length() - 1;
-        source = source.substring(start, end);
+        source = source.substring(start + 1, end);
         String[] tokens = source.split(",");
         String className = null;
         for (String token : tokens) {
