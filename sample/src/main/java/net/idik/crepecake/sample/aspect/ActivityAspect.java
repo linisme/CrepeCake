@@ -11,11 +11,13 @@ import net.idik.crepecake.api.InvocationHandler;
  */
 
 
-@InstanceOf(value = Activity.class, hello = 3)
+@InstanceOf(Activity.class)
 public class ActivityAspect {
 
-    void onCreate(InvocationHandler invocation, Bundle savedInstanceState) {
-
+    public void onCreate(InvocationHandler invocation, Bundle savedInstanceState) {
+        System.out.println("onCreate------------------------");
+        invocation.invoke(savedInstanceState);
+        System.out.println("onCreate------------------------end");
     }
 
 }

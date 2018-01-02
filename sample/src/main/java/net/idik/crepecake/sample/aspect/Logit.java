@@ -1,4 +1,6 @@
-package net.idik.crepecake.annotations;
+package net.idik.crepecake.sample.aspect;
+
+import net.idik.crepecake.annotations.Aspect;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -9,9 +11,8 @@ import java.lang.annotation.Target;
  * Created by linshuaibin on 2018/1/2.
  */
 
-@Target({ElementType.ANNOTATION_TYPE, ElementType.METHOD})
+@Aspect(LogitAspect.class)
 @Retention(RetentionPolicy.SOURCE)
-public @interface Aspect {
-
-    Class value();
+@Target(ElementType.METHOD)
+public @interface Logit {
 }
