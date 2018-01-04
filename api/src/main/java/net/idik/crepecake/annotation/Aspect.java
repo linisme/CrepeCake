@@ -1,4 +1,4 @@
-package net.idik.crepecake.annotations;
+package net.idik.crepecake.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

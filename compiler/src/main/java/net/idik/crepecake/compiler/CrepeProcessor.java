@@ -2,7 +2,7 @@ package net.idik.crepecake.compiler;
 
 import com.google.auto.service.AutoService;
 
-import net.idik.crepecake.annotations.Aspect;
+import net.idik.crepecake.annotation.Aspect;
 import net.idik.crepecake.compiler.data.AspectSpec;
 import net.idik.crepecake.compiler.generator.AspectInstructionCodeGenerator;
 import net.idik.crepecake.compiler.parser.AspectParser;

@@ -1,6 +1,6 @@
 package net.idik.crepecake.compiler.parser;
 
-import net.idik.crepecake.annotations.Aspect;
+import net.idik.crepecake.annotation.Aspect;
 import net.idik.crepecake.api.InvocationHandler;
 import net.idik.crepecake.compiler.Utils;
 import net.idik.crepecake.compiler.data.AspectSpec;

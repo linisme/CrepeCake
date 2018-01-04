@@ -2,7 +2,7 @@ package net.idik.crepecake.sample.aspect;
 
 import android.view.View;
 
-import net.idik.crepecake.annotations.Aspect;
+import net.idik.crepecake.annotation.Aspect;
 import net.idik.crepecake.api.InvocationHandler;
 
 /**

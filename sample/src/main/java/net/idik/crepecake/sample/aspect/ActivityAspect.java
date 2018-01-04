@@ -3,7 +3,7 @@ package net.idik.crepecake.sample.aspect;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 
-import net.idik.crepecake.annotations.Aspect;
+import net.idik.crepecake.annotation.Aspect;
 import net.idik.crepecake.api.InvocationHandler;
 import net.idik.crepecake.sample.MainActivity;
 
