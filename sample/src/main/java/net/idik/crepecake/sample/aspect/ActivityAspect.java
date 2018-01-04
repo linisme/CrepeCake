@@ -3,16 +3,15 @@ package net.idik.crepecake.sample.aspect;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 
-import net.idik.crepecake.annotations.InstanceOf;
+import net.idik.crepecake.annotations.Aspect;
 import net.idik.crepecake.api.InvocationHandler;
-import net.idik.crepecake.sample.MainActivity;
 
 /**
  * Created by linshuaibin on 2017/12/28.
  */
 
 
-@InstanceOf(MainActivity.class)
+@Aspect(ActivityAspectConfig.class)
 public class ActivityAspect {
 
     protected void onCreate(InvocationHandler invocationHandler, Bundle savedInstanceState) {

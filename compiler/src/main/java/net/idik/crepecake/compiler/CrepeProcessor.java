@@ -2,16 +2,13 @@ package net.idik.crepecake.compiler;
 
 import com.google.auto.service.AutoService;
 
-import net.idik.crepecake.annotations.InstanceOf;
-import net.idik.crepecake.compiler.data.AnnotationSpec;
-import net.idik.crepecake.compiler.data.InstanceOfSpec;
-import net.idik.crepecake.compiler.generator.InstanceOfInstructionCodeGenerator;
-import net.idik.crepecake.compiler.parser.InstanceOfParser;
+import net.idik.crepecake.annotations.Aspect;
+import net.idik.crepecake.compiler.data.AspectSpec;
+import net.idik.crepecake.compiler.generator.ApsectInstructionCodeGenerator;
+import net.idik.crepecake.compiler.parser.AspectParser;
 
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 
 import javax.annotation.processing.AbstractProcessor;
@@ -34,7 +31,7 @@ public class CrepeProcessor extends AbstractProcessor {
     private Filer filer;
     private Elements elementUtils;
 
-    private InstanceOfParser instanceOfParser;
+    private AspectParser aspectParser;
 
 
     @Override
@@ -44,7 +41,7 @@ public class CrepeProcessor extends AbstractProcessor {
 
     @Override
     public Set<String> getSupportedAnnotationTypes() {
-        return Collections.singleton(InstanceOf.class.getCanonicalName());
+        return Collections.singleton(Aspect.class.getCanonicalName());
     }
 
     @Override
@@ -54,21 +51,21 @@ public class CrepeProcessor extends AbstractProcessor {
         messager = processingEnvironment.getMessager();
         filer = processingEnvironment.getFiler();
         elementUtils = processingEnvironment.getElementUtils();
-        instanceOfParser = new InstanceOfParser(typeUtils, elementUtils, messager);
+        aspectParser = new AspectParser(typeUtils, elementUtils, messager);
     }
 
     @Override
     public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
 
-        Set<InstanceOfSpec> datas = new HashSet<>();
+        Set<AspectSpec> datas = new HashSet<>();
 
-        for (Element element : roundEnvironment.getElementsAnnotatedWith(InstanceOf.class)) {
+        for (Element element : roundEnvironment.getElementsAnnotatedWith(Aspect.class)) {
 
-            if (!Validator.valid(element, InstanceOf.class, messager)) {
+            if (!Validator.valid(element, Aspect.class, messager)) {
                 continue;
             }
 
-            InstanceOfSpec data = instanceOfParser.parse((TypeElement) element);
+            AspectSpec data = aspectParser.parse((TypeElement) element);
 
             if (data != null) {
                 datas.add(data);
@@ -76,7 +73,7 @@ public class CrepeProcessor extends AbstractProcessor {
 
         }
 
-        new InstanceOfInstructionCodeGenerator(messager, filer).generate(datas);
+        new ApsectInstructionCodeGenerator(messager, filer).generate(datas);
 
         return true;
     }

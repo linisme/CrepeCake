@@ -1,9 +1,9 @@
 package net.idik.crepecake.compiler.parser;
 
-import net.idik.crepecake.annotations.InstanceOf;
+import net.idik.crepecake.annotations.Aspect;
 import net.idik.crepecake.api.InvocationHandler;
 import net.idik.crepecake.compiler.Utils;
-import net.idik.crepecake.compiler.data.InstanceOfSpec;
+import net.idik.crepecake.compiler.data.AspectSpec;
 import net.idik.crepecake.compiler.data.MethodSpec;
 import net.idik.crepecake.compiler.data.VariantSpec;
 
@@ -23,28 +23,28 @@ import javax.lang.model.util.Types;
  * Created by linshuaibin on 2017/12/28.
  */
 
-public class InstanceOfParser {
+public class AspectParser {
 
     private Types types;
     private Elements elements;
     private Messager messager;
 
-    public InstanceOfParser(Types types, Elements elements, Messager messager) {
+    public AspectParser(Types types, Elements elements, Messager messager) {
         this.types = types;
         this.elements = elements;
         this.messager = messager;
     }
 
-    public InstanceOfSpec parse(TypeElement element) {
-        InstanceOf instanceOf = element.getAnnotation(InstanceOf.class);
-        String className = Utils.getRawString(instanceOf, "value");
+    public AspectSpec parse(TypeElement element) {
+        Aspect aspect = element.getAnnotation(Aspect.class);
+        String className = Utils.getRawString(aspect, "value");
         List<MethodSpec> invocationMethods = new ArrayList<>();
         element.getEnclosedElements().forEach(it -> {
             if (it.getKind() == ElementKind.METHOD && ((ExecutableElement) it).getParameters().get(0).asType().toString().equals(InvocationHandler.class.getTypeName())) {
                 invocationMethods.add(parseMethod((ExecutableElement) it));
             }
         });
-        return new InstanceOfSpec(className, element.getQualifiedName().toString(), invocationMethods);
+        return new AspectSpec(className, element.getQualifiedName().toString(), invocationMethods);
     }
 
     private MethodSpec parseMethod(ExecutableElement element) {

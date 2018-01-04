@@ -3,28 +3,29 @@ package net.idik.crepecake.injector
 import javassist.*
 import org.apache.commons.codec.digest.DigestUtils
 
-class InstanceOfInjector {
+class AspectInjector {
 
     private static
     final String INVOCATION_HANDLE_CLASSNAME = 'net.idik.crepecake.api.InvocationHandler'
-    private static final String INSTRUCTION = "net.idik.crepecake.InstanceOfInstruction"
+    private static final String INSTRUCTION = "net.idik.crepecake.AspectInstruction"
     private static
     final int CHECKING_MODIFIERS = Modifier.STATIC | Modifier.PRIVATE | Modifier.PUBLIC | Modifier.PROTECTED
 
-
     private static ClassPool pool = ClassPool.getDefault()
 
-    private CtClass[] targets
+    private Object[] configs
     private String[] processors
     private String path
 
-    InstanceOfInjector() {
-        def instruction = pool.getCtClass(INSTRUCTION).toClass(new Loader(pool), null)
+    private ClassLoader runnerLoader = new Loader(pool)
+
+    AspectInjector() {
+        def instruction = pool.getCtClass(INSTRUCTION).toClass(runnerLoader, null)
         def field = instruction.getDeclaredField('processors')
         field.setAccessible(true)
         processors = field.get(instruction) as String[]
-        targets = new String[processors.length]
-        field = instruction.getDeclaredField('targets')
+        configs = new Object[processors.length]
+        field = instruction.getDeclaredField('configs')
         field.setAccessible(true)
         field.get(instruction).eachWithIndex { it, index ->
             def ct = null
@@ -37,7 +38,7 @@ class InstanceOfInjector {
                     }
                 }
             }
-            targets[index] = pool.getCtClass(it)
+            configs[index] = toClass(ct).newInstance()
         }
     }
 
@@ -63,13 +64,13 @@ class InstanceOfInjector {
 
     private def injectClass(CtClass target, String tag) {
         boolean changed = false
-        if (target.isFrozen()) {
-            target.defrost()
-        }
 
-
-        targets.eachWithIndex { it, index ->
-            if (target.subtypeOf(it)) {
+        configs.eachWithIndex { it, index ->
+            Class targetClazz = toClass(target)
+            if (isHook(it, targetClazz)) {
+                if (target.isFrozen()) {
+                    target.defrost()
+                }
                 def processor = pool.getCtClass(processors[index])
                 if (processor.isFrozen()) {
                     processor.defrost()
@@ -81,12 +82,15 @@ class InstanceOfInjector {
                 changed = true
             }
         }
-
-//        target.nestedClasses.each {
-//            changed = injectClass(it, tag) || changed
-//        }
-
         changed
+    }
+
+    private Class toClass(CtClass target) {
+        def targetClazz = runnerLoader.loadClass(target.getName())
+        if (targetClazz == null) {
+            targetClazz = target.toClass(runnerLoader, null);
+        }
+        targetClazz
     }
 
 
@@ -156,7 +160,8 @@ class InstanceOfInjector {
 
     }
 
-    private static CtClass prepareInvocationHandler(CtClass target, CtClass processor, CtMethod injectMethod) {
+    private
+    static CtClass prepareInvocationHandler(CtClass target, CtClass processor, CtMethod injectMethod) {
         CtClass invocationHandlerInterface = pool.getCtClass("net.idik.crepecake.api.InvocationHandler")
         def invocationHandlerClassName = "${target.name}\$${processor.name.replaceAll('\\.', '_')}_${injectMethod.name}_${DigestUtils.md5Hex(injectMethod.longName)}_InvocationHandler"
         CtClass invocationHandler = pool.getOrNull(invocationHandlerClassName)
@@ -215,8 +220,13 @@ class InstanceOfInjector {
         result
     }
 
+    private static def isHook(Object config, Class target) {
+        def method = config.getClass().getDeclaredMethod("isHook", Class.class)
+        return method.invoke(config, target)
+    }
+
     private static boolean returnVoid(CtMethod method) {
-        method.returnType.name == 'void'
+        method.returnType == CtPrimitiveType.voidType
     }
 
     private static boolean validate(CtMethod originMethod, CtMethod injectMethod) {
