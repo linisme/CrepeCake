@@ -1,6 +1,9 @@
 package net.idik.crepecake.sample;
 
+import android.app.ActionBar;
 import android.os.Bundle;
+import android.os.PersistableBundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +25,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 System.out.println("llllllltoolbar");
+                System.out.println("xxxxxxxxx");
+                System.out.println("Main:----------" + getSupportActionBar());
+                System.out.println("lllllllllll");
             }
         });
 
