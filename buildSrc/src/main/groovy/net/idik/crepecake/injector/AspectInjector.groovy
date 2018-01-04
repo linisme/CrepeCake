@@ -221,7 +221,7 @@ class AspectInjector {
     }
 
     private static def isHook(Object config, Class target) {
-        def method = config.getClass().getDeclaredMethod("isHook", Class.class)
+        def method = config.getClass().getMethod("test", Class.class)
         return method.invoke(config, target)
     }
 

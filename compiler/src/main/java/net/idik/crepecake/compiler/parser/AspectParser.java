@@ -4,6 +4,7 @@ import net.idik.crepecake.annotations.Aspect;
 import net.idik.crepecake.api.InvocationHandler;
 import net.idik.crepecake.compiler.Utils;
 import net.idik.crepecake.compiler.data.AspectSpec;
+import net.idik.crepecake.compiler.data.InstanceOfAspectSpec;
 import net.idik.crepecake.compiler.data.MethodSpec;
 import net.idik.crepecake.compiler.data.VariantSpec;
 
@@ -15,6 +16,7 @@ import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
@@ -29,10 +31,16 @@ public class AspectParser {
     private Elements elements;
     private Messager messager;
 
+    private TypeMirror configRootElementTypeMirror;
+
     public AspectParser(Types types, Elements elements, Messager messager) {
         this.types = types;
         this.elements = elements;
         this.messager = messager;
+    }
+
+    public void beforeParse() {
+        configRootElementTypeMirror = Utils.getTypeElementByClassName(elements, "net.idik.crepecake.api.AspectConfig").asType();
     }
 
     public AspectSpec parse(TypeElement element) {
@@ -44,8 +52,14 @@ public class AspectParser {
                 invocationMethods.add(parseMethod((ExecutableElement) it));
             }
         });
-        return new AspectSpec(className, element.getQualifiedName().toString(), invocationMethods);
+        TypeElement linkElement = Utils.getTypeElementByClassName(elements, className);
+        if (linkElement != null && types.isAssignable(linkElement.asType(), configRootElementTypeMirror)) {
+            return new AspectSpec(className, element.getQualifiedName().toString(), invocationMethods);
+        } else {
+            return new InstanceOfAspectSpec(className, element.getQualifiedName().toString(), invocationMethods);
+        }
     }
+
 
     private MethodSpec parseMethod(ExecutableElement element) {
         List<? extends VariableElement> parameterElements = element.getParameters();

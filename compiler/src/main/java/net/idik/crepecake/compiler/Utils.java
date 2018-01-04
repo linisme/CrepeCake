@@ -3,6 +3,11 @@ package net.idik.crepecake.compiler;
 
 import java.lang.annotation.Annotation;
 
+import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.util.Elements;
+
 /**
  * Created by linshuaibin on 2017/12/29.
  */
@@ -25,4 +30,9 @@ public class Utils {
         }
         return className;
     }
+
+    public static TypeElement getTypeElementByClassName(Elements elements, String className) {
+        return elements.getTypeElement(className);
+    }
+
 }

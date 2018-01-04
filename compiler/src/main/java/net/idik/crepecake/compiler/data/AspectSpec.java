@@ -6,22 +6,22 @@ import java.util.List;
  * Created by linshuaibin on 2017/12/28.
  */
 
-public class AspectSpec extends AnnotationSpec {
+public class AspectSpec {
 
-    private String targetClassName;
+    private String configClassName;
 
     private String processorClassName;
 
     private List<MethodSpec> invocationMethods;
 
-    public AspectSpec(String targetClassName, String processorClassName, List<MethodSpec> invocationMethods) {
-        this.targetClassName = targetClassName;
+    public AspectSpec(String configClassName, String processorClassName, List<MethodSpec> invocationMethods) {
+        this.configClassName = configClassName;
         this.invocationMethods = invocationMethods;
         this.processorClassName = processorClassName;
     }
 
-    public String getTargetClassName() {
-        return targetClassName;
+    public String getConfigClassName() {
+        return configClassName;
     }
 
     public String getProcessorClassName() {

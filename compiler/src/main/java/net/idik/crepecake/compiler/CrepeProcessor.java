@@ -4,7 +4,7 @@ import com.google.auto.service.AutoService;
 
 import net.idik.crepecake.annotations.Aspect;
 import net.idik.crepecake.compiler.data.AspectSpec;
-import net.idik.crepecake.compiler.generator.ApsectInstructionCodeGenerator;
+import net.idik.crepecake.compiler.generator.AspectInstructionCodeGenerator;
 import net.idik.crepecake.compiler.parser.AspectParser;
 
 import java.util.Collections;
@@ -59,6 +59,8 @@ public class CrepeProcessor extends AbstractProcessor {
 
         Set<AspectSpec> datas = new HashSet<>();
 
+        aspectParser.beforeParse();
+
         for (Element element : roundEnvironment.getElementsAnnotatedWith(Aspect.class)) {
 
             if (!Validator.valid(element, Aspect.class, messager)) {
@@ -73,7 +75,7 @@ public class CrepeProcessor extends AbstractProcessor {
 
         }
 
-        new ApsectInstructionCodeGenerator(messager, filer).generate(datas);
+        new AspectInstructionCodeGenerator(messager, filer).generate(datas);
 
         return true;
     }
