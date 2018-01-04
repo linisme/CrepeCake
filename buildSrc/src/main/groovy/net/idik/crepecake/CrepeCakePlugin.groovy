@@ -1,7 +1,7 @@
 package net.idik.crepecake
 
 import com.android.build.gradle.AppExtension
-import net.idik.crepecake.transform.InjectInstanceOfTransform
+import net.idik.crepecake.transform.AspectTransform
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -12,7 +12,7 @@ class CrepeCakePlugin implements Plugin<Project> {
             def android = project.extensions.getByType(AppExtension)
             def properties = new Properties()
             properties.load(project.rootProject.file('local.properties').newDataInputStream())
-            def injectTransform = new InjectInstanceOfTransform()
+            def injectTransform = new AspectTransform()
             injectTransform.androidPath = "${properties.getProperty("sdk.dir")}/platforms/${android.compileSdkVersion}/android.jar"
             android.registerTransform(injectTransform)
         }

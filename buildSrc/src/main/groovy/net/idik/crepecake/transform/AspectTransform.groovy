@@ -4,15 +4,15 @@ import com.android.build.api.transform.*
 import com.android.build.gradle.internal.pipeline.TransformManager
 import com.android.utils.FileUtils
 import javassist.ClassPool
-import net.idik.crepecake.injector.InstanceOfInjector
+import net.idik.crepecake.injector.AspectInjector
 
-class InjectInstanceOfTransform extends Transform {
+class AspectTransform extends Transform {
 
     String androidPath
 
     @Override
     String getName() {
-        return InjectInstanceOfTransform.getSimpleName()
+        return AspectTransform.getSimpleName()
     }
 
     @Override
@@ -41,7 +41,7 @@ class InjectInstanceOfTransform extends Transform {
                 ClassPool.getDefault().appendClassPath(directoryInput.file.absolutePath)
             }
         }
-        def injector = new InstanceOfInjector()
+        def injector = new AspectInjector()
         transformInvocation.inputs.each { input ->
             input.jarInputs.each { jarInput ->
                 def dest = transformInvocation.outputProvider.getContentLocation(jarInput.name, jarInput.contentTypes, jarInput.scopes, Format.JAR)
