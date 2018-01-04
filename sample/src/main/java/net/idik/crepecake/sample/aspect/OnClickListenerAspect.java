@@ -21,7 +21,7 @@ public class OnClickListenerAspect {
     public boolean onLongClick(InvocationHandler invocationHandler, View view) {
         System.out.println("-------------------: OnClickAspect");
         invocationHandler.invoke(view);
-        return false;
+        return true;
     }
 
 }
