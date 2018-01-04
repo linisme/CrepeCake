@@ -125,7 +125,9 @@ class AspectInjector {
                 }
                 def proxyMethod = CtNewMethod.make("protected Object call(Object[] args) { " +
                         "${target.name} target = ((${target.name})getCaller()); " +
-                        (returnVoid(method) ? "target.${newMethodName}($paramStr); return null;" : "return target.${newMethodName}($paramStr);") +
+                        (returnVoid(method) ? "target.${newMethodName}($paramStr); return null;"
+                                : method.returnType.isPrimitive() ? "return new ${getWrapperType(method.returnType)}(target.${newMethodName}($paramStr));"
+                                : "return target.${newMethodName}($paramStr);") +
                         "}", invocationHandler)
                 invocationHandler.addMethod(proxyMethod)
 
@@ -227,6 +229,13 @@ class AspectInjector {
 
     private static boolean returnVoid(CtMethod method) {
         method.returnType == CtPrimitiveType.voidType
+    }
+
+    private static String getWrapperType(CtClass type) {
+        if (type.isPrimitive()) {
+            return type.getWrapperName()
+        }
+        return type
     }
 
     private static boolean validate(CtMethod originMethod, CtMethod injectMethod) {

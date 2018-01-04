@@ -24,10 +24,15 @@ public class MainActivity extends AppCompatActivity {
         toolbar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("llllllltoolbar");
-                System.out.println("xxxxxxxxx");
                 System.out.println("Main:----------" + getSupportActionBar());
-                System.out.println("lllllllllll");
+            }
+        });
+
+        toolbar.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                System.out.println("MainOnLongClick");
+                return false;
             }
         });
 
