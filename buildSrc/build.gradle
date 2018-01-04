@@ -1,6 +1,8 @@
 apply plugin: 'groovy'
-apply plugin: 'maven'
-//apply plugin: 'com.novoda.bintray-release'
+
+apply from: '../configs.gradle'
+archivesBaseName = 'plugin'
+apply from: '../bintray.gradle'
 
 buildscript {
     repositories {

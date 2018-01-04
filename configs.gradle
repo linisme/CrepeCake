@@ -1,0 +1,11 @@
+Properties properties = new Properties()
+
+if (project.rootProject.name == 'buildSrc') {
+    properties.load(rootProject.file('../local.properties').newDataInputStream())
+} else {
+    properties.load(rootProject.file('local.properties').newDataInputStream())
+}
+
+ext {
+    props = properties
+}

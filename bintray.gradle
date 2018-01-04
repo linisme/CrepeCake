@@ -1,0 +1,15 @@
+apply plugin: 'com.novoda.bintray-release'
+
+publish {
+    userOrg = 'idik-net'
+    groupId = group
+    artifactId = archivesBaseName
+    publishVersion = project.version
+    desc = 'An aop engine like AspectJ but easier to use in android application development.'
+    website = 'https://github.com/MEiDIK/CrepeCake'
+    repoName = 'CrepeCake'
+    bintrayUser = props.getProperty("bintray.user")
+    bintrayKey = props.getProperty("bintray.apikey")
+    dryRun = false
+}
+
