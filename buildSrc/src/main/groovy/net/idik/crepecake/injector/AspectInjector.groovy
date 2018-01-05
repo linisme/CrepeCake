@@ -20,7 +20,12 @@ class AspectInjector {
     private ClassLoader runnerLoader = new Loader(pool)
 
     AspectInjector() {
-        def instruction = pool.getCtClass(INSTRUCTION).toClass(runnerLoader, null)
+        def instruction
+        try {
+            instruction = pool.getCtClass(INSTRUCTION).toClass(runnerLoader, null)
+        } catch (NotFoundException e) {
+            return
+        }
         def field = instruction.getDeclaredField('processors')
         field.setAccessible(true)
         processors = field.get(instruction) as String[]
@@ -43,6 +48,9 @@ class AspectInjector {
     }
 
     void inject(String path) {
+        if (configs == null) {
+            return
+        }
         this.path = path
         File dir = new File(path)
         dir.eachFileRecurse { file ->
