@@ -11,6 +11,11 @@ import net.idik.crepecake.sample.MainActivity;
 
 public class OnClickAspectConfig extends AspectConfig {
     @Override
+    protected boolean isEnable() {
+        return super.isEnable();
+    }
+
+    @Override
     public boolean isHook(Class clazz) {
         return View.OnLongClickListener.class.isAssignableFrom(clazz) || View.OnClickListener.class.isAssignableFrom(clazz);
     }

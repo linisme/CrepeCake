@@ -129,20 +129,22 @@ class AspectInjector {
                 if (paramStr.endsWith(", ")) {
                     paramStr = paramStr.substring(0, paramStr.length() - 2)
                 }
-                def proxyMethod = CtNewMethod.make("protected Object call(Object[] args) { " +
-                        "${target.name} target = ((${target.name})getCaller()); " +
-                        (returnVoid(method) ? "target.${newMethodName}($paramStr); return null;"
-                                : method.returnType.isPrimitive() ? "return new ${getWrapperType(method.returnType)}(target.${newMethodName}($paramStr));"
-                                : "return target.${newMethodName}($paramStr);") +
-                        "}", invocationHandler)
-                invocationHandler.addMethod(proxyMethod)
-
-                def processorFieldName = "___" + processor.name.replaceAll("\\.", "_")
-                try {
-                    target.getDeclaredField(processorFieldName)
-                } catch (NotFoundException e) {
-                    target.addField(CtField.make("private ${processor.name} $processorFieldName = new ${processor.name}();", target))
+                def proxyMethod
+                if (isStaticMethod(method)) {
+                    proxyMethod = CtNewMethod.make("protected Object call(Object[] args) { " +
+                            (returnVoid(method) ? "${target.name}.${newMethodName}($paramStr); return null;"
+                                    : method.returnType.isPrimitive() ? "return new ${getWrapperType(method.returnType)}(${target.name}.${newMethodName}($paramStr));"
+                                    : "return ${target.name}.${newMethodName}($paramStr);") +
+                            "}", invocationHandler)
+                } else {
+                    proxyMethod = CtNewMethod.make("protected Object call(Object[] args) { " +
+                            "${target.name} target = ((${target.name})getCaller()); " +
+                            (returnVoid(method) ? "target.${newMethodName}($paramStr); return null;"
+                                    : method.returnType.isPrimitive() ? "return new ${getWrapperType(method.returnType)}(target.${newMethodName}($paramStr));"
+                                    : "return target.${newMethodName}($paramStr);") +
+                            "}", invocationHandler)
                 }
+                invocationHandler.addMethod(proxyMethod)
                 paramStr = ""
                 parameters.eachWithIndex { entry, i ->
                     paramStr += "\$${i + 1}, "
@@ -151,12 +153,25 @@ class AspectInjector {
                     paramStr = ", $paramStr"
                     paramStr = paramStr.substring(0, paramStr.length() - 2)
                 }
-                if (returnVoid(method)) {
-                    method.setBody(" $processorFieldName.${method.name}(new ${invocationHandler.name}(\$0)$paramStr); ")
+                if (isStaticMethod(method)) {
+                    if (returnVoid(method)) {
+                        method.setBody(" ${processor.name}.${method.name}(new ${invocationHandler.name}(${target.name}.class)$paramStr); ")
+                    } else {
+                        method.setBody("return ${processor.name}.${method.name}(new ${invocationHandler.name}(${target.name}.class)$paramStr); ")
+                    }
                 } else {
-                    method.setBody("return $processorFieldName.${method.name}(new ${invocationHandler.name}(\$0)$paramStr); ")
+                    def processorFieldName = "___" + processor.name.replaceAll("\\.", "_")
+                    try {
+                        target.getDeclaredField(processorFieldName)
+                    } catch (NotFoundException e) {
+                        target.addField(CtField.make("private ${processor.name} $processorFieldName = new ${processor.name}();", target))
+                    }
+                    if (returnVoid(method)) {
+                        method.setBody(" $processorFieldName.${method.name}(new ${invocationHandler.name}(\$0)$paramStr); ")
+                    } else {
+                        method.setBody("return $processorFieldName.${method.name}(new ${invocationHandler.name}(\$0)$paramStr); ")
+                    }
                 }
-
                 invocationHandler.writeFile(path)
                 invocationHandler.detach()
             }
@@ -166,6 +181,10 @@ class AspectInjector {
 
         processorChanged
 
+    }
+
+    private static def isStaticMethod(CtMethod method) {
+        (method.modifiers & Modifier.STATIC) == Modifier.STATIC
     }
 
     private

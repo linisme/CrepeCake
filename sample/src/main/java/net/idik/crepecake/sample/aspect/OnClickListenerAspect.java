@@ -9,7 +9,7 @@ import net.idik.crepecake.api.InvocationHandler;
  * Created by linshuaibin on 2018/1/2.
  */
 
-@Aspect(OnClickAspectConfig.class)
+//@Aspect(OnClickAspectConfig.class)
 public class OnClickListenerAspect {
 
     public void onClick(InvocationHandler invocationHandler, View view) {

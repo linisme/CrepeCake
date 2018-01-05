@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private boolean getHome(int now, float a, char b, long d, boolean e, byte f) {
+    private static boolean getHome(int now, float a, char b, long d, boolean e, byte f) {
         return true;
     }
 
