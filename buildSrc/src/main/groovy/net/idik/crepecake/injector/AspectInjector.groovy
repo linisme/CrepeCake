@@ -118,7 +118,11 @@ class AspectInjector {
                 CtClass invocationHandler = prepareInvocationHandler(target, processor, it)
                 String paramStr = ""
                 parameters.eachWithIndex { entry, i ->
-                    paramStr += "(${entry.name})args[$i], "
+                    if (entry.isPrimitive()) {
+                        paramStr += "((${getWrapperType(entry)})args[$i]).${entry.name}Value(), "
+                    } else {
+                        paramStr += "(${entry.name})args[$i], "
+                    }
                 }
                 if (paramStr.endsWith(", ")) {
                     paramStr = paramStr.substring(0, paramStr.length() - 2)
