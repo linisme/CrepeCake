@@ -37,7 +37,7 @@ public class ActivityAspect {
         return bar;
     }
 
-    public boolean getHome(InvocationHandler invocationHandler, int o, float a, char b, long d, boolean e, byte f) {
+    private boolean getHome(InvocationHandler invocationHandler, int o, float a, char b, long d, boolean e, byte f) {
         return (boolean) invocationHandler.invoke(o, a, b, d, e, f);
     }
 

@@ -114,7 +114,9 @@ class AspectInjector {
                 }
 
                 def newMethodName = "_____${processor.name.replaceAll("\\.", "_")}_${method.name}_${System.currentTimeMillis()}"
-                target.addMethod(CtNewMethod.copy(method, newMethodName, target, null))
+                def copyMethod = CtNewMethod.copy(method, newMethodName, target, null)
+                copyMethod.setModifiers(copyMethod.getModifiers() & ~Modifier.PRIVATE & ~Modifier.PROTECTED | Modifier.PUBLIC)
+                target.addMethod(copyMethod)
                 CtClass invocationHandler = prepareInvocationHandler(target, processor, it)
                 String paramStr = ""
                 parameters.eachWithIndex { entry, i ->
