@@ -1,6 +1,7 @@
 package net.idik.crepecake.injector
 
 import javassist.*
+import net.idik.crepecake.injector.processor.ProcessorWrapper
 import org.apache.commons.codec.digest.DigestUtils
 
 class AspectInjector {
@@ -16,6 +17,8 @@ class AspectInjector {
     private Object[] configs
     private String[] processors
     private String path
+
+    private ProcessorWrapper processorWrapper = new ProcessorWrapper()
 
     private ClassLoader runnerLoader = new Loader(pool)
 
@@ -112,19 +115,19 @@ class AspectInjector {
             CtClass[] parameters = it.parameterTypes
             parameters -= it.parameterTypes[0]
 
-            def method = prepareTargetMethod(target, processor, it, parameters)
+            def targetMethod = prepareTargetMethod(target, processor, it, parameters)
 
-            if (method != null && validate(method, it)) {
+            if (targetMethod != null && validate(targetMethod, it)) {
 
                 if ((it.getModifiers() & Modifier.PUBLIC) != Modifier.PUBLIC) {
                     it.setModifiers(it.getModifiers() & ~Modifier.PRIVATE & ~Modifier.PROTECTED | Modifier.PUBLIC)
                     processorChanged |= true
                 }
 
-                def newMethodName = "_____${processor.name.replaceAll("\\.", "_")}_${method.name}_${System.currentTimeMillis()}"
-                def copyMethod = CtNewMethod.copy(method, newMethodName, target, null)
-                copyMethod.setModifiers(copyMethod.getModifiers() & ~Modifier.PRIVATE & ~Modifier.PROTECTED | Modifier.PUBLIC)
-                target.addMethod(copyMethod)
+                def newMethodName = "_____${processor.name.replaceAll("\\.", "_")}_${targetMethod.name}_${System.currentTimeMillis()}"
+                def copyTargetMethod = CtNewMethod.copy(targetMethod, newMethodName, target, null)
+                copyTargetMethod.setModifiers(copyTargetMethod.getModifiers() & ~Modifier.PRIVATE & ~Modifier.PROTECTED | Modifier.PUBLIC)
+                target.addMethod(copyTargetMethod)
                 CtClass invocationHandler = prepareInvocationHandler(target, processor, it)
                 String paramStr = ""
                 parameters.eachWithIndex { entry, i ->
@@ -138,17 +141,17 @@ class AspectInjector {
                     paramStr = paramStr.substring(0, paramStr.length() - 2)
                 }
                 def proxyMethod
-                if (isStaticMethod(method)) {
+                if (isStaticMethod(targetMethod)) {
                     proxyMethod = CtNewMethod.make("protected Object call(Object[] args) { " +
-                            (returnVoid(method) ? "${target.name}.${newMethodName}($paramStr); return null;"
-                                    : method.returnType.isPrimitive() ? "return new ${getWrapperType(method.returnType)}(${target.name}.${newMethodName}($paramStr));"
+                            (returnVoid(targetMethod) ? "${target.name}.${newMethodName}($paramStr); return null;"
+                                    : targetMethod.returnType.isPrimitive() ? "return new ${getWrapperType(targetMethod.returnType)}(${target.name}.${newMethodName}($paramStr));"
                                     : "return ${target.name}.${newMethodName}($paramStr);") +
                             "}", invocationHandler)
                 } else {
                     proxyMethod = CtNewMethod.make("protected Object call(Object[] args) { " +
                             "${target.name} target = ((${target.name})getCaller()); " +
-                            (returnVoid(method) ? "target.${newMethodName}($paramStr); return null;"
-                                    : method.returnType.isPrimitive() ? "return new ${getWrapperType(method.returnType)}(target.${newMethodName}($paramStr));"
+                            (returnVoid(targetMethod) ? "target.${newMethodName}($paramStr); return null;"
+                                    : targetMethod.returnType.isPrimitive() ? "return new ${getWrapperType(targetMethod.returnType)}(target.${newMethodName}($paramStr));"
                                     : "return target.${newMethodName}($paramStr);") +
                             "}", invocationHandler)
                 }
@@ -161,11 +164,11 @@ class AspectInjector {
                     paramStr = ", $paramStr"
                     paramStr = paramStr.substring(0, paramStr.length() - 2)
                 }
-                if (isStaticMethod(method)) {
-                    if (returnVoid(method)) {
-                        method.setBody(" ${processor.name}.${method.name}(new ${invocationHandler.name}(${target.name}.class)$paramStr); ")
+                if (isStaticMethod(targetMethod)) {
+                    if (returnVoid(targetMethod)) {
+                        targetMethod.setBody(" ${processor.name}.${targetMethod.name}(new ${invocationHandler.name}(${target.name}.class)$paramStr); ")
                     } else {
-                        method.setBody("return ${processor.name}.${method.name}(new ${invocationHandler.name}(${target.name}.class)$paramStr); ")
+                        targetMethod.setBody("return ${processor.name}.${targetMethod.name}(new ${invocationHandler.name}(${target.name}.class)$paramStr); ")
                     }
                 } else {
                     def processorFieldName = "___" + processor.name.replaceAll("\\.", "_")
@@ -174,10 +177,10 @@ class AspectInjector {
                     } catch (NotFoundException e) {
                         target.addField(CtField.make("private ${processor.name} $processorFieldName = new ${processor.name}();", target))
                     }
-                    if (returnVoid(method)) {
-                        method.setBody(" $processorFieldName.${method.name}(new ${invocationHandler.name}(\$0)$paramStr); ")
+                    if (returnVoid(targetMethod)) {
+                        targetMethod.setBody(" $processorFieldName.${targetMethod.name}(new ${invocationHandler.name}(\$0)$paramStr); ")
                     } else {
-                        method.setBody("return $processorFieldName.${method.name}(new ${invocationHandler.name}(\$0)$paramStr); ")
+                        targetMethod.setBody("return $processorFieldName.${targetMethod.name}(new ${invocationHandler.name}(\$0)$paramStr); ")
                     }
                 }
                 invocationHandler.writeFile(path)
@@ -218,8 +221,7 @@ class AspectInjector {
         invocationHandler
     }
 
-    private static
-    def prepareTargetMethod(CtClass target, CtClass processor, CtMethod injectMethod, CtClass[] parameters) {
+    private def prepareTargetMethod(CtClass target, CtClass processor, CtMethod injectMethod, CtClass[] parameters) {
 
         CtMethod result = null
         try {
@@ -271,9 +273,9 @@ class AspectInjector {
         return type
     }
 
-    private static boolean validate(CtMethod originMethod, CtMethod injectMethod) {
+    private boolean validate(CtMethod originMethod, CtMethod injectMethod) {
         (originMethod.returnType == injectMethod.returnType
-                && (injectMethod.getModifiers() & CHECKING_MODIFIERS) == (originMethod.getModifiers() & CHECKING_MODIFIERS))
+                && ((processorWrapper.getModifiers(injectMethod) & CHECKING_MODIFIERS) == (originMethod.getModifiers() & CHECKING_MODIFIERS)))
     }
 
     private static String getClassName(String rootPath, String filePath) {
