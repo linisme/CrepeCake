@@ -1,13 +1,12 @@
 package net.idik.crepecake.compiler.generator;
 
-import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
 import net.idik.crepecake.api.AspectConfig;
-import net.idik.crepecake.compiler.data.InstanceOfAspectSpec;
+import net.idik.crepecake.compiler.data.AspectToOneSpec;
 
 import java.io.IOException;
 
@@ -20,13 +19,13 @@ import javax.lang.model.element.Modifier;
  * Created by linshuaibin on 2018/1/4.
  */
 
-public class InstanceOfAspectConfigCodeGenerator extends CodeGenerator<InstanceOfAspectSpec> {
-    InstanceOfAspectConfigCodeGenerator(Filer filer, Messager messager) {
+public class AspectToOneConfigCodeGenerator extends CodeGenerator<AspectToOneSpec> {
+    AspectToOneConfigCodeGenerator(Filer filer, Messager messager) {
         super(filer, messager);
     }
 
     @Override
-    public void generate(InstanceOfAspectSpec spec) {
+    public void generate(AspectToOneSpec spec) {
 
         String className = spec.getConfigClassName();
 
@@ -42,7 +41,8 @@ public class InstanceOfAspectConfigCodeGenerator extends CodeGenerator<InstanceO
                 .addModifiers(Modifier.PROTECTED)
                 .addAnnotation(Override.class)
                 .returns(TypeName.BOOLEAN)
-                .addStatement("return $L.class.isAssignableFrom(clazz)", spec.getTargetClassName())
+//                .addStatement("return $L.class.isAssignableFrom(clazz)", spec.getTargetClassName())
+                .addStatement("return $L.class.equals(clazz)", spec.getTargetClassName())
                 .build()
         );
 

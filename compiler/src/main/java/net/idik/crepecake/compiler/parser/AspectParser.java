@@ -4,7 +4,7 @@ import net.idik.crepecake.annotation.Aspect;
 import net.idik.crepecake.api.InvocationHandler;
 import net.idik.crepecake.compiler.Utils;
 import net.idik.crepecake.compiler.data.AspectSpec;
-import net.idik.crepecake.compiler.data.InstanceOfAspectSpec;
+import net.idik.crepecake.compiler.data.AspectToOneSpec;
 import net.idik.crepecake.compiler.data.MethodSpec;
 import net.idik.crepecake.compiler.data.VariantSpec;
 
@@ -56,7 +56,7 @@ public class AspectParser {
         if (linkElement != null && types.isAssignable(linkElement.asType(), configRootElementTypeMirror)) {
             return new AspectSpec(className, element.getQualifiedName().toString(), invocationMethods);
         } else {
-            return new InstanceOfAspectSpec(className, element.getQualifiedName().toString(), invocationMethods);
+            return new AspectToOneSpec(className, element.getQualifiedName().toString(), invocationMethods);
         }
     }
 

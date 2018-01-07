@@ -7,7 +7,7 @@ import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.TypeSpec;
 
 import net.idik.crepecake.compiler.data.AspectSpec;
-import net.idik.crepecake.compiler.data.InstanceOfAspectSpec;
+import net.idik.crepecake.compiler.data.AspectToOneSpec;
 
 import java.io.IOException;
 import java.util.Set;
@@ -27,12 +27,12 @@ public class AspectInstructionCodeGenerator extends CodeGenerator<Set<AspectSpec
     private static final String CLASS_NAME = "AspectInstruction";
 
     private InvocationHandlerCodeGenerator invocationHandlerCodeGenerator;
-    private InstanceOfAspectConfigCodeGenerator instanceOfAspectConfigCodeGenerator;
+    private AspectToOneConfigCodeGenerator instanceOfAspectConfigCodeGenerator;
 
     public AspectInstructionCodeGenerator(Messager messager, Filer filer) {
         super(filer, messager);
         invocationHandlerCodeGenerator = new InvocationHandlerCodeGenerator(filer, messager);
-        instanceOfAspectConfigCodeGenerator = new InstanceOfAspectConfigCodeGenerator(filer, messager);
+        instanceOfAspectConfigCodeGenerator = new AspectToOneConfigCodeGenerator(filer, messager);
     }
 
     @Override
@@ -81,8 +81,8 @@ public class AspectInstructionCodeGenerator extends CodeGenerator<Set<AspectSpec
 //            invocationHandlerCodeGenerator.generate(methodSpec);
 //        }
 
-        if (spec instanceof InstanceOfAspectSpec) {
-            instanceOfAspectConfigCodeGenerator.generate((InstanceOfAspectSpec) spec);
+        if (spec instanceof AspectToOneSpec) {
+            instanceOfAspectConfigCodeGenerator.generate((AspectToOneSpec) spec);
         }
 
     }

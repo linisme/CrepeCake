@@ -6,6 +6,7 @@ import android.support.v7.app.ActionBar;
 import net.idik.crepecake.annotation.Aspect;
 import net.idik.crepecake.api.InvocationHandler;
 import net.idik.crepecake.sample.MainActivity;
+import net.idik.crepecake.sample.OActivity;
 
 /**
  * Created by linshuaibin on 2017/12/28.
@@ -13,6 +14,7 @@ import net.idik.crepecake.sample.MainActivity;
 
 
 @Aspect(MainActivity.class)
+//@Aspect(OActivity.class)
 public class ActivityAspect {
 
     protected void onCreate(InvocationHandler invocationHandler, Bundle savedInstanceState) {
