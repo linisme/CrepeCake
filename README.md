@@ -2,7 +2,9 @@
 <h1 align="center">CrepeCake</h1>
 <p align="center">An aop engine like AspectJ but easier to use in android application development.</p>
 <p align="center">
+  <a href='https://bintray.com/idik-net/CrepeCake/api/_latestVersion'><img src='https://api.bintray.com/packages/idik-net/CrepeCake/api/images/download.svg'></a>
   <a href="https://github.com/MEiDIK/CrepeCake/blob/master/LICENSE"><img src="https://img.shields.io/github/license/MEiDIK/CrepeCake.svg" alt="GitHub license"></a>
+  <a href="#"><img src="https://img.shields.io/badge/Recommend-%E2%AD%90%EF%B8%8F%E2%AD%90%EF%B8%8F%E2%AD%90%EF%B8%8F%E2%AD%90%EF%B8%8F%E2%AD%90%EF%B8%8F-green.svg" alt="Recommend"></a>
 </p>
 
 
