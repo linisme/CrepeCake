@@ -7,7 +7,7 @@
 
 
 -----
-## Base on CrepeCake
+## See more...
 
 * [HelloHugoCake](https://github.com/MEiDIK/HugoCake)
 
