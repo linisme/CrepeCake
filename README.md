@@ -12,7 +12,7 @@
 
   * [中文](https://github.com/MEiDIK/CrepeCake#%E5%85%88%E6%92%87%E4%B8%80%E7%9C%BC--)
 
-  * [English](https://github.com/MEiDIK/CrepeCake#first-at-a-glance--C)
+  * [English](https://github.com/MEiDIK/CrepeCake#first-at-a-glance--)
 
 -----
 
