@@ -49,45 +49,41 @@ I/System.out: ⇠ onCreate [33ms]
 
 1. Add the buildscript dependencies in the root project:
 
-   ```Groovy
-   buildscript {
- 
-     repositories {
-         google()
-         jcenter()
-     }
-     dependencies {
-         classpath 'com.android.tools.build:gradle:3.0.1'
-         classpath 'net.idik.crepecake:plugin:0.0.3' // Add Here
-     }
- 
-   }
-   ```
+  ```Groovy
+  buildscript {
 
-2. Add crepecake plugin and dependencies in the target module
-   > The crepecake plugin MUST **BEFORE**(**VERY IMPORTANT**) the application plugin
+    repositories {
+        google()
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'net.idik.crepecake:plugin:0.0.4' // Add Here
+    }
 
-   ```Groovy
-   apply plugin: 'net.idik.crepecake'
- 
-   dependencies {
-       implementation 'net.idik.crepecake:api:0.0.3'
-       annotationProcessor 'net.idik.crepecake:compiler:0.0.3'
-       // Other dependencies...
-   }
- 
-   ```
+  }
+  ```
+
+2. Add crepecake plugin in the target module
+  > The crepecake plugin MUST **AFTER**(**VERY IMPORTANT**) the application plugin
+
+  ```Groovy
+  
+  // Apply application or library plugin here...
+  apply plugin: 'net.idik.crepecake'
+
+  ```
 
 ## Usage
 
 1. Programme the injection processor on the basis of target class, with the annotation ``@Aspect``
 
-   ```Java
-   @Aspect(MainActivity.class)
-   public class MainActivityAspect {
-     // injection methods...
-   }
-   ```
+  ```Java
+  @Aspect(MainActivity.class)
+  public class MainActivityAspect {
+    // injection methods...
+  }
+  ```
 
 2. Programme the injection method
 
@@ -105,7 +101,7 @@ I/System.out: ⇠ onCreate [33ms]
          System.out.println("⇢ onCreate");
          long startTime = System.currentTimeMillis();
          invocationHandler.invoke(savedInstanceState);
-         System.out.println(String.format("⇠ onCreate [%dms]", System.currentTimeMillis() - startTime));
+         System.out.println(String.format("⇠ onCreate [%dms]", System.currentTimeMillis() - startTime)); 
        }
 
        public android.support.v7.app.ActionBar getSupportActionBar(InvocationHandler invocationHandler) {
@@ -210,43 +206,37 @@ I/System.out: ⇠ onCreate [33ms]
 
 1. 在root project的buildscript中添加dependencies如下：
 
-   ```Groovy
-   buildscript {
- 
-     repositories {
-         google()
-         jcenter()
-     }
-     dependencies {
-         classpath 'com.android.tools.build:gradle:3.0.1'
-         classpath 'net.idik.crepecake:plugin:0.0.3' //添加在此
-     }
- 
-   }
-   ```
+  ```Groovy
+  buildscript {
 
-2. 在目标模块的build.gradle文件中添加插件(**请务必添加于Application插件前**)以及依赖如下：
-   ```Groovy
-   apply plugin: 'net.idik.crepecake'
- 
-   dependencies {
-       implementation 'net.idik.crepecake:api:0.0.3'
-       annotationProcessor 'net.idik.crepecake:compiler:0.0.3'
-       // 其他依赖...
-   }
- 
-   ```
+    repositories {
+        google()
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'net.idik.crepecake:plugin:0.0.4' //添加在此
+    }
+
+  }
+  ```
+
+2. 在目标模块的build.gradle文件中添加插件(**请务必添加于Application插件后**)如下：
+  ```Groovy
+  // apply application or library plugin here
+  apply plugin: 'net.idik.crepecake'
+
+  ```
 
 ## 用法
 
 1. 根据目标类，编写注入处理器，通过``@Aspect``指定目标类
-
-   ```Java
-   @Aspect(MainActivity.class)
-   public class MainActivityAspect {
-     // 注入方法们...
-   }
-   ```
+  ```Java
+  @Aspect(MainActivity.class)
+  public class MainActivityAspect {
+    // 注入方法们...
+  }
+  ```
 
 2. 编写注入方法，步骤如下
 
@@ -262,7 +252,7 @@ I/System.out: ⇠ onCreate [33ms]
          System.out.println("⇢ onCreate");
          long startTime = System.currentTimeMillis();
          invocationHandler.invoke(savedInstanceState);
-         System.out.println(String.format("⇠ onCreate [%dms]", System.currentTimeMillis() - startTime)); 
+         System.out.println(String.format("⇠ onCreate [%dms]", System.currentTimeMillis() - startTime));
        }
 
        public android.support.v7.app.ActionBar getSupportActionBar(InvocationHandler invocationHandler) {

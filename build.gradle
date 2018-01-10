@@ -25,7 +25,7 @@ allprojects {
         mavenCentral()
     }
     group 'net.idik.crepecake'
-    version '0.0.3'
+    version '0.0.4'
 }
 
 task clean(type: Delete) {

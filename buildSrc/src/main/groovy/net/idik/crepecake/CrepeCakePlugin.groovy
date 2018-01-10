@@ -15,10 +15,10 @@ class CrepeCakePlugin implements Plugin<Project> {
         android.registerTransform(injectTransform)
 
         project.dependencies {
-//            implementation 'net.idik.crepecake:api:0.0.3'
-//            annotationProcessor 'net.idik.crepecake:compiler:0.0.3'
-            implementation project.project(':api')
-            annotationProcessor project.project(':compiler')
+            implementation 'net.idik.crepecake:api:0.0.4'
+            annotationProcessor 'net.idik.crepecake:compiler:0.0.4'
+//            implementation project.project(':api')
+//            annotationProcessor project.project(':compiler')
         }
 
     }
