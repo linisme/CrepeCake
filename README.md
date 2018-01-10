@@ -1,6 +1,6 @@
 <p align="center"><a href="https://github.com/MEiDIK/CrepeCake" target="_blank"><img width="200"src="logo.png"></a></p>
 <h1 align="center">CrepeCake</h1>
-<p align="center">An aop engine like AspectJ but easier to use in android application development.</p>
+<p align="center">A compile-time aop engine like AspectJ but easier to use in android application development.</p>
 <p align="center">
   <a href='https://bintray.com/idik-net/CrepeCake/api/_latestVersion'><img src='https://api.bintray.com/packages/idik-net/CrepeCake/api/images/download.svg'></a>
   <a href="https://github.com/MEiDIK/CrepeCake/blob/master/LICENSE"><img src="https://img.shields.io/github/license/MEiDIK/CrepeCake.svg" alt="GitHub license"></a>
@@ -8,10 +8,164 @@
 </p>
 
 
+## 先撇一眼
+
+举个例子注入MainActivity的onCreate方法:
+
+```Java
+
+@Aspect(MainActivity.class)
+public class MainActivityAspect {
+
+    protected void onCreate(InvocationHandler invocationHandler, Bundle savedInstanceState) {
+      System.out.println("⇢ onCreate");
+      long startTime = System.currentTimeMillis();
+      invocationHandler.invoke(savedInstanceState);
+      System.out.println(String.format("⇠ onCreate [%dms]", System.currentTimeMillis() - startTime));    }
+
+}
+
+```
+
+这就完成了对MainActivity的注入，以上代码会输出onCreate的运行时间：
+
+```
+I/System.out: ⇢ onCreate
+I/System.out: ⇠ onCreate [33ms]
+```
+
+
+
+## 安装
+
+1. 在root project的buildscript中添加dependencies如下：
+
+  ```Groovy
+  buildscript {
+
+    repositories {
+        google()
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'net.idik.crepecake:plugin:0.0.3' //添加在此
+    }
+
+  }
+  ```
+
+2. 在目标模块的build.gradle文件中添加插件(**请务必添加与Application插件前**)以及依赖如下：
+  ```Groovy
+  apply plugin: 'net.idik.crepecake'
+
+  dependencies {
+      implementation 'net.idik.crepecake:api:0.0.3'
+      annotationProcessor 'net.idik.crepecake:compiler:0.0.3'
+      // 其他依赖...
+  }
+
+  ```
+
+## 用法
+
+1. 根据目标类，编写注入处理器，通过``@Aspect``指定目标类
+  ```Java
+  @Aspect(MainActivity.class)
+  public class MainActivityAspect {
+    // 注入方法们...
+  }
+  ```
+
+2. 编写注入方法，步骤如下
+
+   Step 1. 声明注入方法与目标方法声明一致，包括访问属性、静态、方法命名、参数列表等  
+   Step 2. 添加``InvocationHandler invocationHandler``至参数列表第一位  
+   Done.
+
+   ```Java
+   @Aspect(MainActivity.class)
+   public class MainActivityAspect {
+
+       protected void onCreate(InvocationHandler invocationHandler, Bundle savedInstanceState) {
+         System.out.println("⇢ onCreate");
+         long startTime = System.currentTimeMillis();
+         invocationHandler.invoke(savedInstanceState);
+         System.out.println(String.format("⇠ onCreate [%dms]", System.currentTimeMillis() - startTime));    }
+       }
+
+       public android.support.v7.app.ActionBar getSupportActionBar(InvocationHandler invocationHandler) {
+           ActionBar bar = (ActionBar) invocationHandler.invoke();
+           //do stuff...
+           return bar;
+       }
+
+       //other inject methods...
+   }
+   ```
+
+至此，我们已经完成了对MainActivity的``onCreate(Bundle savedInstanceState)``，``getSupportActionBar()``以及其他方法的切面注入。
+
+> InvocationHandler这个参数很重要，这个参数标志着这是一个注入方法，并且通过这个参数，我们可以调用目标方法，并获取返回值（如果非``void``）
+
+### 进阶用法
+
+通过继承``AspectConfig``对象可以对注入点进行个性化的定制，如下：
+```Java
+public class OnClickAspectConfig extends AspectConfig {
+    @Override
+    protected boolean isEnable() {
+        return super.isEnable();
+    }
+
+    @Override
+    public boolean isHook(Class clazz) {
+        return View.OnLongClickListener.class.isAssignableFrom(clazz) || View.OnClickListener.class.isAssignableFrom(clazz);
+    }
+}
+
+```
+
+其中，isHook方法判断该类是否为目标类，在上述代码中指定了``OnLongClickListener``和``OnClickListener``的**所有子类**都为注入目标，我们可以通过该方法进行定制。
+
+> ⚠️ 注意：这个类将会在编译时被调用，请不要在此类中做运行时动态逻辑。
+
+写完配置类后，在注入类上通过``@Aspect``注解应用即可
+
+```Java
+@Aspect(OnClickAspectConfig.class)
+public class OnClickListenerAspect {
+  public void onClick(InvocationHandler invocationHandler, View view) {
+      System.out.println("OnClick: " + view);
+      invocationHandler.invoke(view);
+  }
+
+  public boolean onLongClick(InvocationHandler invocationHandler, View view) {
+      boolean isConsume = (boolean) invocationHandler.invoke(view);
+      if (isConsume) {
+          System.out.println("OnLongClick: " + view);
+      }
+      return isConsume;
+  }
+}
+```
+
+## 查看更多...
+
+* [HelloHugoCake](https://github.com/MEiDIK/HugoCake) - 一个基于CrepeCake的Hugo简易实现
+
+## 万分感谢
+
+* [Hugo](https://github.com/JakeWharton/hugo) By [JakeWharton](https://github.com/JakeWharton)
+
+
+
 -----
 ## See more...
 
 * [HelloHugoCake](https://github.com/MEiDIK/HugoCake)
+
+-----------
 
 
 ## License

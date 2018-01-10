@@ -13,15 +13,16 @@ import net.idik.crepecake.api.InvocationHandler;
 public class OnClickListenerAspect {
 
     public void onClick(InvocationHandler invocationHandler, View view) {
-        System.out.println("---------------------" + view);
+        System.out.println("OnClick: " + view);
         invocationHandler.invoke(view);
-        System.out.println("-000----------------------");
     }
 
     public boolean onLongClick(InvocationHandler invocationHandler, View view) {
-        System.out.println("-------------------: OnClickAspect");
-        invocationHandler.invoke(view);
-        return true;
+        boolean isConsume = (boolean) invocationHandler.invoke(view);
+        if (isConsume) {
+            System.out.println("OnLongClick: " + view);
+        }
+        return isConsume;
     }
 
 }

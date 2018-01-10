@@ -1,6 +1,7 @@
 package net.idik.crepecake.sample.aspect;
 
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v7.app.ActionBar;
 
 import net.idik.crepecake.annotation.Aspect;
@@ -18,9 +19,10 @@ import net.idik.crepecake.sample.OActivity;
 public class ActivityAspect {
 
     protected void onCreate(InvocationHandler invocationHandler, Bundle savedInstanceState) {
-        System.out.println("onCreate------------------------");
+        System.out.println("⇢ onCreate");
+        long startTime = System.currentTimeMillis();
         invocationHandler.invoke(savedInstanceState);
-        System.out.println("onCreate------------------------end");
+        System.out.println(String.format("⇠ onCreate [%dms]", System.currentTimeMillis() - startTime));
     }
 
     protected void onStart(InvocationHandler invocationHandler) {
