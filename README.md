@@ -8,12 +8,11 @@
 </p>
 
 
------
 ## Wiki
 
-  * [中文](https://github.com/MEiDIK/CrepeCake/blob/master/README.md#%E5%85%88%E6%92%87%E4%B8%80%E7%9C%BC)
+  * [中文](https://github.com/MEiDIK/CrepeCake#%E5%85%88%E6%92%87%E4%B8%80%E7%9C%BC--)
 
-  * [English](https://github.com/MEiDIK/CrepeCake/blob/master/README.md#%E5%85%88%E6%92%87%E4%B8%80%E7%9C%BC)
+  * [English](https://github.com/MEiDIK/CrepeCake#first-at-a-glance--C)
 
 -----
 
@@ -86,7 +85,7 @@ I/System.out: ⇠ onCreate [33ms]
   ```Java
   @Aspect(MainActivity.class)
   public class MainActivityAspect {
-    // 注入方法们...
+    // injection methods...
   }
   ```
 
