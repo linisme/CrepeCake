@@ -6,19 +6,22 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 
 class CrepeCakePlugin implements Plugin<Project> {
+
     @Override
     void apply(Project project) {
-        project.afterEvaluate {
-            def android = project.extensions.getByType(AppExtension)
-            def properties = new Properties()
-            properties.load(project.rootProject.file('local.properties').newDataInputStream())
-            def injectTransform = new AspectTransform()
-            injectTransform.androidPath = "${properties.getProperty("sdk.dir")}/platforms/${android.compileSdkVersion}/android.jar"
-            android.registerTransform(injectTransform)
+
+        def android = project.extensions.getByType(AppExtension)
+        def injectTransform = new AspectTransform(project)
+        android.registerTransform(injectTransform)
+
+        project.dependencies {
+//            implementation 'net.idik.crepecake:api:0.0.3'
+//            annotationProcessor 'net.idik.crepecake:compiler:0.0.3'
+            implementation project.project(':api')
+            annotationProcessor project.project(':compiler')
         }
+
     }
 
-    static String capitalize(String str) {
-        return str.substring(0, 1).toUpperCase(Locale.US) + str.substring(1)
-    }
+
 }

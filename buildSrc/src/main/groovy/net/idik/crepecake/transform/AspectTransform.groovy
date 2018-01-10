@@ -1,14 +1,20 @@
 package net.idik.crepecake.transform
 
 import com.android.build.api.transform.*
+import com.android.build.gradle.AppExtension
 import com.android.build.gradle.internal.pipeline.TransformManager
 import com.android.utils.FileUtils
 import javassist.ClassPool
 import net.idik.crepecake.injector.AspectInjector
+import org.gradle.api.Project
 
 class AspectTransform extends Transform {
 
-    String androidPath
+    Project project
+
+    AspectTransform(Project project) {
+        this.project = project
+    }
 
     @Override
     String getName() {
@@ -32,6 +38,10 @@ class AspectTransform extends Transform {
 
     @Override
     void transform(TransformInvocation transformInvocation) throws TransformException, InterruptedException, IOException {
+        def android = project.extensions.getByType(AppExtension)
+        def properties = new Properties()
+        properties.load(project.rootProject.file('local.properties').newDataInputStream())
+        def androidPath = "${properties.getProperty("sdk.dir")}/platforms/${android.compileSdkVersion}/android.jar"
         ClassPool.getDefault().insertClassPath(androidPath)
         transformInvocation.inputs.each { input ->
             input.jarInputs.each { jarInput ->
