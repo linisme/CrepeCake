@@ -4,6 +4,7 @@
 <p align="center">
   <a href='https://bintray.com/idik-net/CrepeCake/api/_latestVersion'><img src='https://api.bintray.com/packages/idik-net/CrepeCake/api/images/download.svg'></a>
   <a href="https://github.com/MEiDIK/CrepeCake/blob/master/LICENSE"><img src="https://img.shields.io/github/license/MEiDIK/CrepeCake.svg" alt="GitHub license"></a>
+  <a href="http://androidweekly.net/issues/issue-292"><img src="https://img.shields.io/badge/Android%20Weekly-%23292-green.svg" alt="Android Weekly"></a>
   <a href="#"><img src="https://img.shields.io/badge/Recommend-%E2%AD%90%EF%B8%8F%E2%AD%90%EF%B8%8F%E2%AD%90%EF%B8%8F%E2%AD%90%EF%B8%8F%E2%AD%90%EF%B8%8F-green.svg" alt="Recommend"></a>
 </p>
 
@@ -116,7 +117,7 @@ I/System.out: ⇠ onCreate [33ms]
 
 So far, we have completed the job that injects the ``onCreate(Bundle savedInstanceState)``，``getSupportActionBar()`` and other methods in the MainActivity.
 
-> ``InvocationHandler`` is a flag indicating this is an injection method. Beside, we could invoke the origin method through it and obtain the result(if return type is not ``void``).
+> ``InvocationHandler`` is a flag indicating this is an injection method. Beside, we could invoke the original method through it and obtain the result(if return type is not ``void``).
 
 #### AspectConfig
 
@@ -139,7 +140,7 @@ public class OnClickAspectConfig extends AspectConfig {
 
 The above codes means that we will inject **ALL** the subClass of ``OnLongClickListener`` and ``OnClickListener``.
 
-> ⚠️ Attention: The AspectConfig class will be executed during the compile-time, so not do running-time logic within it.
+> ⚠️ Attention: The AspectConfig class will be executed during the compile-time, so do not make any running-time logic within it.
 
 Then, use it to the injection processor with the annotation ``@Aspect``
 
